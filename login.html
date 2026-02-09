@@ -310,7 +310,7 @@ to{opacity:1;transform:none}
     await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/index1.html'
+        redirectTo: window.location.origin + '/index.html'
       }
     });
   };
@@ -318,7 +318,7 @@ to{opacity:1;transform:none}
   // אם המשתמש כבר מחובר – מעבירים אותו
   supabaseClient.auth.getSession().then(({ data }) => {
   if (data.session) {
-  window.location.href = 'index1.html';
+  window.location.href = 'index.html';
 }
   });
 
@@ -390,7 +390,7 @@ document.getElementById("login-form").onsubmit = async (e)=>{
     return;
   }
 
-  window.location.href = "index1.html";
+  window.location.href = "index.html";
 };
 
 
@@ -423,7 +423,7 @@ document.getElementById("register-form").onsubmit = async (e)=>{
     email,
     password,
     options: {
-      emailRedirectTo: window.location.origin + "/index1.html"
+      emailRedirectTo: window.location.origin + "/index.html"
     }
   });
 

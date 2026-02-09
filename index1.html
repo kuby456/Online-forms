@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>דף ראשי</title>
+<style>
+ body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  direction: rtl;
+  text-align: right;
+}
+
+/* ===== סרגל עליון ===== */
+.top-bar {
+  display: flex;
+  align-items: center;
+  background-color: #295683;
+  color: white;
+  padding: 10px 20px;
+}
+
+/* קבוצה שמאלית (אייקון + לוגאאוט) */
+.top-bar .left {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* האייקון נשאר ליד הטקסט */
+.top-bar .left img {
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+}
+
+/* כפתור Sign Out – נדחף שמאלה פיזית */
+#logout-btn {
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  margin-right: auto; /* ⭐ זה הסוד ב-RTL */
+}
+
+/* קבוצה ימנית – לוגו */
+.top-bar .right {
+  display: flex;
+  align-items: center;
+}
+
+.top-bar .right img {
+  width: 100px;
+  height: auto;
+}
+
+/* ===== תוכן מרכזי ===== */
+.main-content {
+  padding: 20px 15px;
+  text-align: center;
+}
+
+.main-content h2 {
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* ===== כפתורי משחקים ===== */
+.game-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+}
+
+.game-buttons button {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  width: 90px;
+  min-width: 90px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.game-buttons button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+
+
+/* ===== סרגל תחתון ===== */
+.bottom-bar {
+  background-color: none;
+  color: white;
+  padding: 12px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+ 
+}
+
+.bottom-bar button {
+  position: relative; 
+border: solid 3px; /* כדי שהאפטר יתבסס עליו */
+   color: black;
+  border: none;
+  padding: 12px 28px;         /* הגדלתי קצת את הריפוד למראה מאוזן יותר */
+  cursor: pointer;
+  border-radius: 8px;         /* עיגול קצוות רך יותר */
+  font-size: 16px;
+  font-weight: 600;           /* משקל פונט מעט כבד יותר למראה מקצועי */
+  overflow: hidden;           /* כדי שהאפטר לא ייצא */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ border: solid 1px rgba(0, 0, 0, 0.6);
+}
+
+/* אפקט בעת העכבר */
+.bottom-bar button:hover {
+  transform: translateY(-3px);  /* הרמה קלה יותר */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);  /* צל חזק יותר */
+  background: linear-gradient(135deg, #0056b3, #520dc2);  /* גרדיאנט כהה יותר להדגשה */
+ border: none;
+}
+
+/* ::after ליצירת הילה / גל אפקט יפה */
+.bottom-bar button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.4); /* אור לבן חצי שקוף, שומר על זה כדי להתאים לגרדיאנט */
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease, opacity 0.5s ease;
+  opacity: 0;                 /* התחלתי עם שקיפות 0 כדי שהאנימציה תהיה חלקה */
+  z-index: 0;                 /* מתחת לטקסט */
+}
+
+/* כשהעכבר על הכפתור - האפטר מתרחב */
+.bottom-bar button:hover::after {
+  width: 300%;                /* הרחבתי כדי לכסות טוב יותר כפתורים ארוכים */
+  height: 300%;               /* תיקנתי לריבועי כדי שיהיה עיגול מושלם */
+  opacity: 1;                 /* מופיע בהדרגה */
+}
+
+/* אפקט לחיצה (active) להוספת עומק */
+.bottom-bar button:active {
+  transform: translateY(1px); /* לחיצה פנימה */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #004085, #3e0a92);  /* גרדיאנט כהה עוד יותר */
+}
+
+/* פוקוס למקלדת - נגישות */
+.bottom-bar button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);  /* הילה כחולה סביב, להתאמה לצבעים החדשים */
+}
+
+
+/* אנימציה לפתיחה */
+@keyframes fadeInSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+    padding: 0 15px;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 300px;
+    padding: 15px;
+  }
+}
+
+/* אנימציה לסגירה */
+@keyframes fadeOutSlide {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 300px;
+    padding: 15px;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+    padding: 0 15px;
+  }
+}
+
+/* מצב פתוח */
+.about-content.show {
+  animation: fadeInSlide 0.4s forwards;
+}
+
+/* מצב סגור (כשתוריד את ה-class) */
+.about-content.hide {
+  animation: fadeOutSlide 0.4s forwards;
+}
+ /* =====================
+   Game Buttons Container
+===================== */
+.game-buttons {
+    display: flex;
+    justify-content: space-between; /* פיזור שווה לאורך השורה */
+    flex-wrap: nowrap;              /* שורה אחת בלבד */
+    gap: 20px;                      /* רווח בין הכפתורים */
+    margin-bottom: 30px;
+    overflow: hidden; 
+}
+
+/* =====================
+   Game Button Styles
+===================== */
+.game-buttons button {
+    position: relative;
+    overflow: hidden;               /* מסתיר את מה שחוץ לכפתור */
+    flex: 1 1 auto;                 /* גמישות בגודל */
+    max-width: 120px;               /* גודל מקסימלי */
+    min-width: 60px;                /* גודל מינימלי */
+    height: 110px;                  /* גובה אחיד */
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.game-buttons button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* =====================
+   Image inside Button
+===================== */
+.game-buttons button img {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%) translateX(100%); /* מתחיל מימין */
+    width: 60px;
+    height: 60px;
+    animation: slideLoop 12.2s linear infinite; /* סה"כ זמן */
+}
+
+/* =====================
+   Slide Loop Animation
+===================== */
+@keyframes slideLoop {
+    0% {
+        transform: translateY(-50%) translateX(100%); /* מחוץ לכפתור מימין */
+    }
+    10% {
+        transform: translateY(-50%) translateX(0%);   /* מגיע למרכז - כניסה מהירה */
+    }
+    92% {
+        transform: translateY(-50%) translateX(0%);   /* נשאר במרכז ל-10 שניות */
+    }
+    100% {
+        transform: translateY(-50%) translateX(-100%); /* יוצא שמאלה */
+    }
+}
+
+/* =====================
+   Span (טקסט) inside Button
+===================== */
+.game-buttons button span {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
+    font-size: 13px;
+    color: #333;
+    z-index: 2; /* מעל התמונה */
+    text-align: center;
+}
+
+/* =====================
+   Center Button Styles (אייקון קטן מרכזי)
+===================== */
+.center-button {
+    display: flex;
+    flex-direction: column;       /* אייקון מעל הטקסט */
+    align-items: center;          /* מרכז התוכן */
+    justify-content: center;
+    margin: 30px auto;
+    padding: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+}
+
+.center-button img {
+    width: 40px;                  /* גודל קטן של האייקון */
+    height: 40px;
+    margin-bottom: 4px;           /* רווח קטן בין האייקון לטקסט */
+}
+
+.center-button span {
+    font-size: 10px;              /* טקסט קטן מתחת לאייקון */
+    text-align: center;
+    color: #333;
+}
+
+.center-button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+ .ygo1 {
+  background: linear-gradient(135deg, #FFD700, #DAA520, #B8860B); /* גרדיאנט זהב מעניין: מזהב בהיר לכהה, עם וייב יוקרתי */
+  -webkit-background-clip: text; /* כדי שהגרדיאנט יהיה על הטקסט עצמו */
+  -webkit-text-fill-color: transparent; /* שקיפות כדי שהגרדיאנט יראה */
+  color: transparent; /* פולבק לדפדפנים ישנים */
+  font-size: 2em; /* גודל כותרת סטנדרטי, אפשר לשנות */
+  font-weight: bold;
+  text-align: center; /* אם רוצים מרכוז */
+  padding: 10px 0; /* קצת ריווח */
+  transition: background 0.3s ease; /* אנימציה קלה */
+  margin: 0 auto;
+}
+
+#logout-btn {
+  position: relative;
+  margin-right: auto; /* RTL */
+
+  background: linear-gradient(135deg, #5e97cf, #295683);
+  color: white;
+  border: none;
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* ריחוף – רק הרמה וצל (בלי ברק) */
+#logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+}
+
+/* =====================
+   Shine Effect
+===================== */
+#logout-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.45),
+    transparent
+  );
+}
+
+/* מופעל רק עם JS */
+#logout-btn.spark::before {
+  animation: shine 0.6s ease forwards;
+}
+
+@keyframes shine {
+  from { left: -120%; }
+  to   { left: 120%; }
+}
+
+/* =====================
+   Focus (נגישות)
+===================== */
+#logout-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 75, 75, 0.5);
+}
+
+.ggg1{
+  margin-right: 47%;
+}
+
+
+/* רקע המודאל – מכסה את כל המסך */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0; /* במקום left/top/width/height */
+  background-color: rgba(0, 0, 0, 0.6);
+  overflow-y: auto;
+  padding: 40px 12px; /* ריווח צדדים במובייל */
+}
+
+/* תוכן המודאל */
+.modal-content {
+  background-color: #fff;
+  margin: 0 auto;
+  padding: 20px 24px;
+  border-radius: 12px;
+
+  width: 100%;
+  max-width: 720px;     /* רוחב אידיאלי לקריאה */
+  box-sizing: border-box;
+
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+  direction: rtl;
+  text-align: right;
+}
+
+/* במסכים גדולים – קצת יותר אוויר */
+@media (min-width: 1024px) {
+  .modal-content {
+    max-width: 800px;
+    padding: 28px 36px;
+  }
+}
+
+/* כפתור סגירה */
+.close {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  cursor: pointer;
+  font-size: 26px;
+  line-height: 1;
+  color: #666;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.close:hover {
+  color: #e74c3c;
+  transform: scale(1.1);
+}
+  
+.close img{
+  width: 40px;
+  height: auto;
+background-color: #004085;
+border-radius: 50%;
+}
+/* כפתור תחתון */
+.bottom-bar button {
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.bottom-bar button:hover {
+  background: linear-gradient(135deg, #0056b3, #520dc2);
+  color: white;
+  border-color: transparent;
+}
+
+/* =====================
+   Desktop Styles
+===================== */
+@media (min-width: 1024px) {
+
+  body {
+    background-color: #f0f2f5;
+  }
+
+  /* סרגל עליון */
+  .top-bar {
+    padding: 14px 40px;
+  }
+
+  .top-bar .right img {
+    width: 140px;
+  }
+
+  /* תוכן מרכזי */
+  .main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .main-content h2 {
+    font-size: 2.4em;
+    margin-bottom: 40px;
+  }
+
+  /* כפתורי משחקים */
+  .game-buttons {
+    justify-content: center;
+    gap: 30px;
+  }
+
+  .game-buttons button {
+    max-width: 160px;
+    height: 150px;
+  }
+
+  .game-buttons button img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .game-buttons button span {
+    font-size: 15px;
+    bottom: 10px;
+  }
+
+  /* כפתור אמצעי */
+  .center-button img {
+    width: 55px;
+    height: 55px;
+  }
+
+  .center-button span {
+    font-size: 14px;
+  }
+
+  /* סרגל תחתון */
+  .bottom-bar {
+    padding: 20px;
+  }
+
+  .bottom-bar button {
+    font-size: 18px;
+    padding: 14px 40px;
+  }
+
+  /* מודאל */
+  .modal-content {
+    max-width: 900px;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<!-- סרגל עליון -->
+<div class="top-bar">
+  <div class="left">
+<button class="ggg1">
+      <img  src="home.png" alt="Icon">
+</button>
+<button id="logout-btn"><img src="exit.png"></button>
+  </div>
+</div>
+
+<!-- תוכן מרכזי -->
+<div class="main-content">
+  <h2 class="ygo1">שליחת טפסים אונליין <br>סוגי משחקים</h2>
+  <div class="game-buttons">
+  <button onclick="goToPage('index2.html')">
+    <img src="lotto.png">
+    <span style="color:red;">לוטו</span>
+  </button>
+
+  <button onclick="goToPage('index3.html')">
+    <img src="123.png">
+    <span style="color:#FF8C42;">123</span>
+  </button>
+
+  <button onclick="goToPage('index4.html')">
+    <img src="777.png">
+    <span style="color:#D8699B;">777</span>
+  </button>
+
+  <button onclick="goToPage('index5.html')">
+    <img src="game.png">
+    <span style="color:green;">צ'אנס</span>
+  </button>
+</div>
+</div>
+  
+  <hr style="width: 80%; margin: 5px auto;">
+  <button class="center-button">
+    <img src="image.png" alt="Game3">
+      <span style="font-weight: bolder; font-size: 15px;">אימות-שליחות<br> הטפסים</span>
+  </button>
+
+  
+
+  <!-- כפתור לפתיחת המודאל -->
+<div class="bottom-bar">
+  <button id="about-btn">אודות האתר</button>
+</div>
+
+<!-- המודאל עצמו -->
+<div id="about-modal" class="modal">
+  <div class="modal-content">
+    <!-- כפתור סגירה -->
+    <span id="close-modal" class="close">
+      <img class="close1" src="close.png" alt="סגירה" width="24" height="24">
+    </span>
+
+    <h3>📝 מה האתר עושה?</h3>
+    <p>
+      אתר זה נועד לאפשר <strong>שליחת טפסים מהבית או באופן מקוון</strong>.
+      המשתמשים ממלאים את הטפסים ושולחים אותם דרך האתר, והטפסים מתקבלים אצלנו
+      לצורך <strong>מעקב וביצוע ידני בקיוסק</strong>.
+      ביום השליחות, תמונת הטפסים מוצגת בכפתור
+      <strong>אימות-שליחות</strong> לצורך בדיקה ואישור.
+    </p>
+<h3>ℹ️ הבהרה לגבי אופן השליחה</h3>
+<p>
+  חשוב להבהיר כי <strong>שליחת הטפסים מתבצעת באופן ידני</strong>.
+  בשל אופי העבודה הידני, ייתכנו לעיתים <strong>עיכובים, טעויות אנוש או דילוגים</strong>,
+  לרבות אי־שליחה להגרלה מסוימת או השתתפות בהגרלה עוקבת.
+</p>
+
+<p>
+  במשחקים הכוללים <strong>הגרלות דחופות או מועדים קצרים</strong>,
+  ייתכן שטופס יישלח להגרלה הקרובה האפשרית ולא בהכרח לאותה הגרלה
+  שהמשתמש התכוון אליה במקור.
+</p>
+
+<p>
+  אנו עושים <strong>את מיטב המאמצים</strong> כדי לשלוח את הטפסים
+  להגרלה הקרובה ביותר, אך <strong>אין באפשרותנו להתחייב</strong>
+  למועד הגרלה ספציפי.
+  השימוש בשירות מהווה <strong>הסכמה לאופן פעולה זה</strong>.
+</p>
+
+    <h3>⚠️ אזהרה בנוגע לשימוש במשחקי הגרלות</h3>
+    <p>
+      האתר <strong>אינו שייך למפעל הפיס</strong> ואינו פועל מטעמו.
+      המידע והמשחקים המוצגים באתר ניתנים <strong>למטרות מידע והמחשה בלבד</strong>.
+      <strong>השתתפות בהגרלות ובהימורים עלולה להיות ממכרת ולהוביל לנזקים כלכליים</strong>.
+      אנו, מפעילי האתר, <strong>איננו נושאים באחריות להפסדים, נזקים או תוצאות
+      הנובעים מהשתתפות בהימורים</strong>.
+    </p>
+
+    <h3>❌ שייכות, אחריות והבהרה משפטית</h3>
+    <p>
+      אין לנו כל קשר ל־<strong>מפעל הפיס</strong>, איננו נציגים שלו ואיננו פועלים מטעמו
+      בשום צורה.
+      כל המידע המוצג באתר מסופק <strong>כפי שהוא</strong>, וללא התחייבות מכל סוג שהוא.
+      האחריות על השימוש באתר, בתכניו ובשירותיו חלה על המשתמש בלבד.
+    </p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ⚠️ הגדרה אחת בלבד של supabase
+  const supabaseClient = supabase.createClient(
+    'https://obhhrcjvjoyurwfoukqr.supabase.co',
+    'sb_publishable_tSE7k5N9Qmfg2LeSyHTErg_FZgBoSrT'
+  );
+
+  // ודא שכל האלמנטים קיימים
+  const logoutBtn = document.getElementById('logout-btn');
+  const aboutBtn = document.getElementById('about-btn');
+  const modal = document.getElementById('about-modal');
+  const closeBtn = document.getElementById('close-modal');
+
+  // בדיקת סשן משתמש
+  supabaseClient.auth.getSession().then(({ data: { session } }) => {
+    if (!session) {
+      window.location.href = 'login.html';
+    }
+  });
+
+  // =======================
+  // Logout animation
+  // =======================
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      logoutBtn.classList.remove('spark');
+      void logoutBtn.offsetWidth; // reset animation
+      logoutBtn.classList.add('spark');
+
+      // אפשר להוסיף כאן logout אמיתי אחרי האנימציה
+      // setTimeout(() => logout(), 600);
+    });
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login.html';
+    });
+  }
+
+  // =======================
+  // ניווט לדפים שונים
+  // =======================
+  function goToPage(page) {
+    window.location.href = page;
+  }
+
+  // =======================
+  // מודאל אודות האתר
+  // =======================
+  if (aboutBtn && modal && closeBtn) {
+    // פתיחת מודאל עם אנימציה מלמטה למעלה
+    aboutBtn.addEventListener('click', () => {
+      modal.style.display = 'block';
+      aboutBtn.style.display = 'none';
+
+      const modalContent = modal.querySelector('.modal-content');
+      modalContent.style.transform = 'translateY(100%)';
+      modalContent.style.opacity = '0';
+      modalContent.style.transition =
+        'transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease';
+
+      setTimeout(() => {
+        modalContent.style.transform = 'translateY(0)';
+        modalContent.style.opacity = '1';
+      }, 10);
+    });
+
+    // סגירת מודאל בלחיצה על כפתור הסגירה
+    closeBtn.addEventListener('click', () => {
+      const modalContent = modal.querySelector('.modal-content');
+      modalContent.style.transform = 'translateY(100%)';
+      modalContent.style.opacity = '0';
+
+      setTimeout(() => {
+        modal.style.display = 'none';
+        aboutBtn.style.display = 'inline-block';
+      }, 500);
+    });
+
+    // סגירת מודאל בלחיצה מחוץ לתוכן
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        const modalContent = modal.querySelector('.modal-content');
+        modalContent.style.transform = 'translateY(100%)';
+        modalContent.style.opacity = '0';
+
+        setTimeout(() => {
+          modal.style.display = 'none';
+          aboutBtn.style.display = 'inline-block';
+        }, 500);
+      }
+    });
+  }
+</script>
+
+
+</body>
+</html>

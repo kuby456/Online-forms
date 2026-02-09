@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>לוטו אינטראקטיבי</title>
+<style>
+ body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #f4f7fa, #dce6f1);
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    direction: rtl;
+    text-align: right;
+       user-select: none; /* מונע בחירה של טקסט */
+    -webkit-user-select: none; /* ספארי וכרום */
+    -moz-user-select: none; /* פיירפוקס */
+    -ms-user-select: none; 
+    
+}
+
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 28px;
+    letter-spacing: 1px;
+}
+
+.controls {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+#live-cost-display {
+    margin: 20px auto;
+    padding: 20px;
+    width: 260px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between; /* מפזר את הפריטים זה לצד זה */
+    font-weight: bold;
+    color: #1f8199;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    
+}
+
+.display-item {
+    display: flex;
+    flex-direction: column; /* התווית למעלה, הערך למטה */
+    align-items: center;
+    gap: 6px;
+    
+}
+
+.label {
+    font-size: 14px;
+    opacity: 0.9; /* קצת פחות מודגש */
+}
+
+.value {
+    font-size: 18px;
+}
+
+
+#table-count, #total-cost {
+    font-size: 18px;
+    padding: 5px 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+hr {
+    border: 1px solid rgba(255,255,255,0.3);
+    margin: 5px 0;
+}
+
+#tables-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.lotto-table {
+    background: #ffffff;
+    border: 1px solid #bdc3c7;
+    border-radius: 12px;
+    padding: 15px;
+    width: 300px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lotto-table:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgb(155, 135, 135);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    font-size: small;
+}
+
+.delete-btn:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+.selected-numbers {
+    text-align: center;
+    font-size: 16px;
+    color: #34495e;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.selected-numbers::before {
+    content: "מספרים:";
+    font-weight: bold;
+}
+
+.numbers-display {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.number-ball {
+    background-color: #3498db;
+    color: white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.number-ball:hover {
+    transform: scale(1.2);
+    background-color: #2980b9;
+}
+
+.strong-ball {
+    background-color: #e67e22;
+    color: white;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.strong-ball::before {
+    content: "חזק: ";
+    font-size: 16px;
+    color: #fff;
+    position: absolute;
+    left: -60px;
+    font-weight: bold;
+}
+
+.modal-bg {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: linear-gradient(to bottom, #ffffff, #f9f9f9);
+    border-radius: 15px;
+    padding: 25px;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+}
+
+#numbers-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.number-circle {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.number-circle:hover {
+    background-color: #bdc3c7;
+    transform: scale(1.15);
+}
+
+.number-circle.selected {
+    background-color: #27ae60;
+    color: white;
+}
+
+#modal-confirm {
+    background-color: #2ecc71;
+    margin-top: 15px;
+}
+
+#modal-confirm:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+}
+
+.fff1{
+    background-color: #1f8199;
+
+}
+#total-cost{
+    color: rgb(109, 109, 23)
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  background-color: #34495e;
+  padding: 10px 20px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+.bottom-bar button {
+  background-color: #2ecc71;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.bottom-bar button:hover {
+  background-color: #27ae60;
+}
+
+.about-content {
+  display: none; /* מתחבא כברירת מחדל */
+  margin-top: 10px;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  padding: 15px;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: right; /* אם רוצים בעברית */
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 50px;
+}
+ 
+ #tables-container{
+    margin-bottom: 70px;
+ }
+
+  .ygo1 {
+  background: linear-gradient(135deg, #FFD700, #DAA520, #B8860B); /* גרדיאנט זהב מעניין: מזהב בהיר לכהה, עם וייב יוקרתי */
+  -webkit-background-clip: text; /* כדי שהגרדיאנט יהיה על הטקסט עצמו */
+  -webkit-text-fill-color: transparent; /* שקיפות כדי שהגרדיאנט יראה */
+  color: transparent; /* פולבק לדפדפנים ישנים */
+  font-size: 2em; /* גודל כותרת סטנדרטי, אפשר לשנות */
+  font-weight: bold;
+  text-align: center; /* אם רוצים מרכוז */
+  padding: 10px 0; /* קצת ריווח */
+  transition: background 0.3s ease; /* אנימציה קלה */
+  margin: 30px auto;
+  margin-top: 80px;
+     border-bottom: solid 3px gold;
+      width: 180px;
+  }
+ 
+ #understood-btn{
+    display: flex;
+    margin: 0 auto;
+ }
+
+ /* ===== התאמות למחשב (Desktop) ===== */
+@media screen and (min-width: 1024px) {
+
+  body {
+    padding: 40px;
+  }
+
+  h1.ygo1 {
+    font-size: 2.5em;
+  }
+
+  #tables-container {
+    display: flex;              /* ❗ חובה */
+    flex-wrap: wrap;
+    justify-content: center;    /* או flex-start אם אתה רוצה לשמאל */
+    gap: 24px;
+
+    max-width: 1200px;
+    margin: 0 auto 70px auto;
+  }
+
+  .lotto-table {
+    width: 320px;
+  }
+
+  #live-cost-display {
+    width: 400px;
+    font-size: 18px;
+  }
+
+  .modal {
+    max-width: 700px;
+  }
+
+  .bottom-bar {
+    max-width: 800px;
+  }
+}
+
+/* כפתור ניווט בסגנון מודרני ומושך */
+.rrr2 {
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #8b8b8f, #1e3c9c); /* גרדיאנט כחול נעים */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* צל קל למראה תלת-ממדי */
+}
+
+.rrr2:hover {
+  background: linear-gradient(135deg, #2980b9, #1f618d); /* כהה יותר בהובר */
+  transform: translateY(-2px); /* קפיצה קלה למעלה */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rrr2:active {
+  transform: translateY(0); /* חזרה למקום בלחיצה */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* מצב מוסתר */
+.bottom-bar.hidden {
+  opacity: 0;
+  transform: translate(-50%, 100%); /* זזה כלפי מטה */
+  pointer-events: none; /* לא ניתן ללחוץ כשהיא מוסתרת */
+}
+
+
+/* אנימציה להופעה */
+.bottom-bar.show {
+  animation: slideUp 0.4s forwards;
+}
+
+/* אנימציה להיעלמות */
+.bottom-bar.hide {
+  animation: slideDown 0.4s forwards;
+}
+
+/* keyframes להופעה */
+@keyframes slideUp {
+  0% {
+    transform: translateX(-50%) translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* keyframes להיעלמות */
+@keyframes slideDown {
+  0% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(100%);
+    opacity: 0;
+  }
+}
+
+#show-bar-btn {
+    position: relative;       /* נשאר במקום גם בזמן גלילה */
+    bottom: 20px;          /* מרחק מהתחתית */
+    right: 0;           /* מרחק מהצד הימני */
+    z-index: 1000; 
+    margin: 0 auto;       /* מעל רוב האלמנטים */
+    width: 60px;           /* רוחב הכפתור */
+    height: 60px;          /* גובה הכפתור */
+    cursor: pointer;       /* מצביע עכבר משתנה למצב לחיצה */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* אנימציה חלקה */
+}
+
+
+
+#show-bar-btn:hover {
+    transform: scale(1.1); /* מעט התרחבות בעת ריחוף */
+}
+
+.ttt1 {
+    position: fixed;        /* נשאר בתחתית גם בזמן גלילה */
+    bottom: 20px;              /* בדיוק בתחתית הדף */
+    left: 50%;              /* למרכז הציר האופקי */
+    transform: translateX(-50%); /* יישור מדויק למרכז */
+    display: flex;          /* אם יש ילדים שאתה רוצה לסדר בשורה */
+    margin: 0;              /* אין מרווח חיצוני */
+    z-index: -1000;
+    text-align: center;   
+  
+}
+
+.fkfkf1{
+  font-size: 20px;
+  font-weight: bolder;
+      text-align: center;
+      display: flex;
+margin: 0 auto;
+justify-content: center;
+padding-top: 10px;
+}
+
+/* =====================
+   Desktop Styles
+===================== */
+@media (min-width: 1024px) {
+
+  body {
+    background-color: #f0f2f5;
+  }
+
+  /* סרגל עליון */
+  .top-bar {
+    padding: 14px 40px;
+  }
+
+  .top-bar .right img {
+    width: 140px;
+  }
+
+  /* תוכן מרכזי */
+  .main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .main-content h2 {
+    font-size: 2.4em;
+    margin-bottom: 40px;
+  }
+
+  /* כפתורי משחקים */
+  .game-buttons {
+    justify-content: center;
+    gap: 30px;
+  }
+
+  .game-buttons button {
+    max-width: 160px;
+    height: 150px;
+  }
+
+  .game-buttons button img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .game-buttons button span {
+    font-size: 15px;
+    bottom: 10px;
+  }
+
+  /* כפתור אמצעי */
+  .center-button img {
+    width: 55px;
+    height: 55px;
+  }
+
+  .center-button span {
+    font-size: 14px;
+  }
+
+  /* סרגל תחתון */
+  .bottom-bar {
+    padding: 20px;
+  }
+
+  .bottom-bar button {
+    font-size: 18px;
+    padding: 14px 40px;
+  }
+
+  /* מודאל */
+  .modal-content {
+    max-width: 900px;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+display: flex;
+  background-color: #295683;
+  color: white;
+  padding: 10px 20px;
+
+  z-index: 999;        /* מעל כל התוכן */
+  white-space: nowrap;
+ 
+}
+
+
+/* קבוצה שמאלית (אייקון + לוגאאוט) */
+.top-bar .left {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* האייקון נשאר ליד הטקסט */
+.top-bar .left img {
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+}
+
+/* כפתור Sign Out – נדחף שמאלה פיזית */
+#logout-btn {
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  margin-right: auto; /* ⭐ זה הסוד ב-RTL */
+}
+
+/* קבוצה ימנית – לוגו */
+.top-bar .right {
+  display: flex;
+  align-items: center;
+}
+
+.top-bar .right img {
+  width: 100px;
+  height: auto;
+}
+/* מעבר דף – מריחה ימינה */
+.page-slide-out {
+  animation: slideOutRight 0.45s ease forwards;
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+.ggg1{
+display: flex;
+margin: 5px auto;
+}
+</style>
+</head>
+<body>
+
+  <!-- סרגל עליון -->
+<div class="top-bar">
+  <div class="left">
+<button class="ggg1" onclick="goHome()">
+  <img src="home.png" alt="Icon">
+</button>
+  </div>
+</div>
+
+<h1 class="ygo1">טופס לוטו</h1>
+<div id="live-cost-display">
+  <div id="table-count">טבלאות: 0</div>
+  <hr class="fff1">
+  <div id="total-cost">עלות כוללת: 0 ₪</div>
+</div>
+<div class="controls">
+  <button onclick="addTable()">+ הוסף טבלה</button>
+  <button onclick="autoTable()">אקראי</button>
+</div>
+
+
+<div id="tables-container"></div>
+
+<!-- מודל בחירת מספרים -->
+<div id="modal-bg" class="modal-bg">
+  <div class="modal">
+    <h2 id="modal-title">בחר 6 מספרים</h2>
+    <div id="numbers-container"></div>
+    <button id="modal-confirm">אישור</button>
+  </div>
+</div> 
+
+<div class="bottom-bar" id="tot1" style="display:none;">
+  <button class="rrr2" onclick="window.location.href='INDEXO1.html'">
+ להמשך השליחה 
+</button>
+
+  <button id="about-btn">מידע על ההגרלות</button>
+  
+  <div class="about-content" id="about-content" style="display:none;">
+ <p>
+  הלוטו הוא משחק הגרלות פופולרי בישראל, שבו בכל הגרלה נבחרים 6 מספרים מתוך 37, בנוסף למספר חזק אחד מתוך 7. 
+  ניחוש נכון של כל 6 המספרים יחד עם המספר החזק מזכה בפרס הראשון, אך ניתן לזכות גם רק עם 6 המספרים. 
+  ההגרלות נערכות פעמיים בשבוע, ביום שלישי ובמוצאי שבת, ולעיתים גם ביום חמישי.
+</p>
+
+<p style="font-weight:bold; color:#b00;">
+  <strong>הערת אחריות:</strong> 
+  האתר הזה אינו מפעל הפיס ואינו חלק ממנו, ואין לנו קשר רשמי להגרלות או לפרסים. 
+  המידע המוצג נועד למטרות הסבר בלבד. 
+  ההשתתפות בלוטו ובכל משחקי הימורים אחרים היא על אחריותך בלבד. 
+  הימורים עלולים להיות ממכרים ולגרום לנזקים כלכליים. 
+  איננו אחראים לכל הפסד או נזק הנגרם כתוצאה מהימורים.
+</p>
+
+<p>
+  למידע רשמי נוסף והשתתפות חוקית בהגרלות, יש לעבור לאתר הרשמי של מפעל הפיס:
+  <a href="https://www.pais.co.il/info/lotto/About-Lotto.aspx" target="_blank">לחץ כאן למידע נוסף</a>.
+</p>
+
+  </div>
+</div>
+<div class="ttt1">
+<div id="show-bar-btn">🡇
+    <botton class="fkfkf1">לשליחה</botton>
+    </div>
+    </div>
+
+ 
+</button>
+<script>
+    const aboutBtn = document.getElementById('about-btn');
+const aboutContent = document.getElementById('about-content');
+  const showBtn = document.getElementById('show-bar-btn');
+const bottomBar = document.getElementById('tot1');
+
+
+    const tablePrice = 6;
+let tables = [];
+let currentTable = null;
+let selectingStrong = false;
+
+// פונקציה ליצירת טבלה חדשה
+function addTable() {
+  const container = document.getElementById('tables-container');
+
+  const tableDiv = document.createElement('div');
+  tableDiv.className = 'lotto-table';
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'delete-btn';
+  deleteBtn.innerHTML = 'מחיקה';
+  deleteBtn.onclick = (e) => {
+    e.stopPropagation(); // עוצר את פתיחת הבאנר/מודל
+    tableDiv.remove();    // מוחק את הטבלה מה־DOM
+    tables = tables.filter(t => t.div !== tableDiv); // עדכון המערך של הטבלאות
+    updateLiveCost();     // ⚡ עדכון תצוגת לייב אחרי המחיקה
+};
+
+  tableDiv.appendChild(deleteBtn);
+
+  const selectedDiv = document.createElement('div');
+  selectedDiv.className = 'selected-numbers';
+  selectedDiv.innerHTML = '<div class="numbers-display"></div><div class="strong-ball"></div>';
+  tableDiv.appendChild(selectedDiv);
+
+  // לחיצה על הטבלה לפתיחת המודל
+  tableDiv.onclick = () => openNumberModal(tableDiv);
+
+  container.appendChild(tableDiv);
+ tables.push({div: tableDiv, main: [], strong: null});
+updateTableDisplay(tables[tables.length - 1]);
+updateLiveCost();
+scrollToTable(tableDiv); // ✅ נכון
+}
+
+function goHome() {
+  document.body.classList.add('page-slide-out');
+
+  setTimeout(() => {
+    window.location.href = 'index1.html';
+  }, 420); // חייב להתאים לאורך האנימציה
+}
+// פונקציה לפתיחת מודל בחירה
+function openNumberModal(tableDiv) {
+  currentTable = tables.find(t => t.div === tableDiv);
+  selectingStrong = false;
+  showModal(1); // שלב ראשון: בחירת 6 מספרים
+}
+
+// יצירת המודל עם המספרים
+function showModal(step) {
+  const modalBg = document.getElementById('modal-bg');
+  const numbersContainer = document.getElementById('numbers-container');
+  const title = document.getElementById('modal-title');
+
+  numbersContainer.innerHTML = '';
+  if(step===1){
+    title.textContent = 'בחר 6 מספרים';
+    for(let i=1;i<=37;i++){
+      const num = document.createElement('div');
+      num.className = 'number-circle';
+      num.textContent = i;
+      if(currentTable.main.includes(i)) num.classList.add('selected');
+      num.onclick = () => {
+        if(currentTable.main.includes(i)) {
+          currentTable.main = currentTable.main.filter(x=>x!==i);
+          num.classList.remove('selected');
+        } else if(currentTable.main.length<6){
+          currentTable.main.push(i);
+          num.classList.add('selected');
+        }
+      };
+      numbersContainer.appendChild(num);
+    }
+  } else {
+    title.textContent = 'בחר מספר חזק';
+    for(let i=1;i<=7;i++){
+      const num = document.createElement('div');
+      num.className = 'number-circle';
+      num.textContent = i;
+      if(currentTable.strong===i) num.classList.add('selected');
+      num.onclick = () => {
+        currentTable.strong = i;
+        // עדכון בחירה ויזואלית
+        Array.from(numbersContainer.children).forEach(n=>n.classList.remove('selected'));
+        num.classList.add('selected');
+      };
+      numbersContainer.appendChild(num);
+    }
+  }
+
+  modalBg.style.display = 'flex';
+}
+
+// לחיצה על אישור במודל
+document.getElementById('modal-confirm').onclick = () => {
+  if(!selectingStrong){
+    if(currentTable.main.length!==6){
+      alert('בחר 6 מספרים');
+      return;
+    }
+    selectingStrong = true;
+    showModal(2); // שלב שני: מספר חזק
+  } else {
+    if(currentTable.strong===null){
+      alert('בחר מספר חזק');
+      return;
+    }
+    // עדכון תצוגה בטבלה
+    updateTableDisplay(currentTable);
+    // סגירת מודל
+    document.getElementById('modal-bg').style.display = 'none';
+  }
+};
+
+function autoTable() {
+  addTable(); // יוצרים טבלה חדשה רגילה
+  const table = tables[tables.length - 1]; // לוקחים את הטבלה האחרונה שנוספה
+
+  // יוצרים 6 מספרים אקראיים 1-37 ללא כפילויות
+  const mainNumbers = [];
+  while(mainNumbers.length < 6) {
+    const n = Math.floor(Math.random() * 37) + 1;
+    if(!mainNumbers.includes(n)) mainNumbers.push(n);
+  }
+  mainNumbers.sort((a,b) => a-b); // אופציונלי – ממיין את המספרים
+
+  // מספר חזק אקראי 1-7
+  const strongNumber = Math.floor(Math.random() * 7) + 1;
+
+  table.main = mainNumbers;
+  table.strong = strongNumber;
+
+  // עדכון התצוגה בטבלה
+  updateTableDisplay(table);
+  updateLiveCost();
+scrollToTable(tableDiv);
+}
+
+function updateLiveCost() {
+  const numTables = tables.length;
+  const totalCost = numTables * tablePrice;
+
+  const tableCountDiv = document.getElementById('table-count');
+  const totalCostDiv = document.getElementById('total-cost');
+
+  tableCountDiv.textContent = `טבלאות: ${numTables}`;
+  totalCostDiv.textContent = `עלות כוללת: ${totalCost} ₪`;
+}
+
+function updateTableDisplay(table) {
+  const numbersDisplay = table.div.querySelector('.numbers-display');
+  const strongBall = table.div.querySelector('.strong-ball');
+
+  numbersDisplay.innerHTML = '';
+  strongBall.textContent = ''; // איפוס לפני עדכון
+
+  if(table.main.length === 0) {
+    // אם עדיין לא נבחרו מספרים, מציגים כפתור
+    const selectBtn = document.createElement('button');
+    selectBtn.textContent = 'בחר מספרים';
+    selectBtn.style.padding = '8px 12px';
+    selectBtn.style.fontSize = '14px';
+    selectBtn.style.borderRadius = '6px';
+    selectBtn.style.cursor = 'pointer';
+    selectBtn.onclick = (e) => {
+      e.stopPropagation(); // לא לפתוח טבלה מחדש
+      openNumberModal(table.div);
+    };
+    numbersDisplay.appendChild(selectBtn);
+  } else {
+    // מיון המספרים מהקטן לגדול לפני הצגה
+    const sortedNumbers = [...table.main].sort((a, b) => a - b);
+
+    sortedNumbers.forEach(num => {
+      const ball = document.createElement('div');
+      ball.className = 'number-ball';
+      ball.textContent = num;
+      numbersDisplay.appendChild(ball);
+    });
+
+    if(table.strong !== null) {
+      strongBall.textContent = table.strong;
+    }
+  }
+}
+
+
+aboutBtn.addEventListener('click', (e) => {
+  e.stopPropagation(); // כדי שהקליק על הכפתור לא ייסגר מיד
+  aboutContent.style.display = 'block'; // מראה את התוכן
+  aboutBtn.style.display = 'none'; // מסתיר את הכפתור
+});
+
+// סגירה בלחיצה בכל מקום אחר בדף
+document.addEventListener('click', (e) => {
+  if (aboutContent.style.display === 'block') {
+    aboutContent.style.display = 'none';
+    aboutBtn.style.display = 'inline-block';
+  }
+});
+
+// מונע סגירה אם לוחצים על התוכן עצמו
+aboutContent.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+
+function scrollToTable(tableDiv) {
+    // אם האלמנט לא קיים – יוצאים
+    if (!tableDiv) return;
+
+    // מיקום היעד ביחס לדף
+    const targetY = tableDiv.getBoundingClientRect().top + window.scrollY;
+    const startY = window.scrollY;           // מיקום התחלתי
+    const distance = targetY - startY;       // מרחק לגלול
+    const duration = 600;                     // משך הגלילה במילישניות
+    let startTime = null;
+
+    // פונקציית easing: easeInOutQuad
+    function easeInOutQuad(t) {
+        return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+    }
+
+    // פונקציית הצעד בגלילה
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = timestamp - startTime;
+        const t = Math.min(progress / duration, 1); // 0..1
+        const eased = easeInOutQuad(t);
+
+        // מעדכנים את מיקום הגלילה
+        window.scrollTo(0, startY + distance * eased);
+
+        // אם לא הגענו לסוף – ממשיכים ל־next frame
+        if (t < 1) {
+            requestAnimationFrame(step);
+        }
+    }
+
+    requestAnimationFrame(step);
+}
+
+
+  aboutBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    aboutContent.style.display = 'block';
+    aboutBtn.style.display = 'none';
+  });
+
+ 
+
+  // סגירה בלחיצה מחוץ לחלון התוכן
+  document.addEventListener('click', (e) => {
+    if (aboutContent.style.display === 'block' && !aboutContent.contains(e.target) && e.target !== aboutBtn) {
+      aboutContent.style.display = 'none';
+      aboutBtn.style.display = 'inline-block';
+    }
+  });
+
+  // מונע סגירה בלחיצה בתוך התוכן עצמו
+  aboutContent.addEventListener('click', (e) => e.stopPropagation());
+
+
+
+
+    // סגירת הסרגל בלחיצה מחוץ לו
+document.addEventListener('click', (e) => {
+    // אם הסרגל פתוח וקליק לא על הסרגל ולא על כפתור ההצגה
+    if (bottomBar.classList.contains('show') && !bottomBar.contains(e.target) && e.target !== showBtn) {
+        // החלפת קלאסים כדי להפעיל אנימציית סגירה
+        bottomBar.classList.remove('show');
+        bottomBar.classList.add('hide');
+        // לאחר שהאנימציה נגמרת, מסתירים לגמרי
+        setTimeout(() => {
+            bottomBar.style.display = 'none';
+        }, 400);
+    }
+});
+
+// מונע סגירה אם לוחצים על הכפתור עצמו
+showBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // מונע שהקליק יתפוס את ה-document listener
+    if (bottomBar.classList.contains('show')) {
+        bottomBar.classList.remove('show');
+        bottomBar.classList.add('hide');
+        setTimeout(() => {
+            bottomBar.style.display = 'none';
+        }, 400);
+    } else {
+        bottomBar.style.display = 'flex';
+        bottomBar.classList.remove('hide');
+        bottomBar.classList.add('show');
+    }
+});
+
+// מונע סגירה אם לוחצים בתוך הסרגל עצמו
+bottomBar.addEventListener('click', (e) => e.stopPropagation());
+
+addTable(); // יצירת טבלה ראשונית
+
+</script>
+</body>
+</html>

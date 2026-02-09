@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>התחברות</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+   body {
+font-family: Arial, sans-serif;
+background: linear-gradient(to bottom, #f4f7fa, #e1e8f0);
+height: 100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:0;
+}
+
+.card {
+background:#fff;
+padding:32px;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+text-align:center;
+width:340px;
+animation:fadeIn .5s ease;
+}
+
+h1 {
+margin-bottom:25px;
+color:#1f8199;
+}
+
+button {
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+transition:.25s;
+}
+
+#google-login {
+background:#000000;
+color:white;
+width: 70%;
+margin: auto;
+}
+
+#google-login:hover {
+background:#357ae8;
+}
+
+.register-btn {
+background:#1f8199;
+color:white;
+margin-top:10px;
+}
+
+.register-btn:hover {
+background:#186677;
+}
+
+input {
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+margin-bottom:12px;
+font-size:14px;
+}
+
+input:focus {
+outline:none;
+border-color:#1f8199;
+box-shadow:0 0 0 2px rgba(31,129,153,.15);
+}
+
+.switch, .back {
+margin-top:30px;
+font-size:18px;
+color:#1f8199;
+cursor:pointer;
+}
+
+.switch:hover,.back:hover {
+text-decoration:underline;
+}
+
+@keyframes fadeIn {
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:none}
+}
+.note {
+  margin-top: 15px;
+  font-size: 13px;          /* קטן ועדין */
+  color: #888;             /* אפור רך */
+  line-height: 1.4;
+  opacity: 0.8;
+  user-select: none;       /* שלא ייבחר בטעות */
+}
+#register-form {
+  display: none;
+  margin-top: 20px;
+  animation: registerFade .4s ease forwards;
+ 
+}
+
+/* שדות */
+#register-form input {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  text-align: right;
+  transition: border .2s, box-shadow .2s;
+}
+
+#register-form input:focus {
+  outline: none;
+  border-color: #1f8199;
+  box-shadow: 0 0 0 2px rgba(31,129,153,.2);
+}
+
+/* כפתור הרשמה */
+.register-btn {
+  background: linear-gradient(135deg,#1f8199,#3ba2b9);
+  color: white;
+  margin-top: 5px;
+  border-radius: 12px;
+}
+
+.register-btn:hover {
+  background: linear-gradient(135deg,#186677,#2f8fa4);
+}
+
+/* חזרה */
+.back {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #1f8199;
+  cursor: pointer;
+  opacity: .8;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* אנימציית כניסה */
+@keyframes registerFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+#error-box {
+  color: #d93025;
+  font-size: 12px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+#login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* שדות */
+#login-form input {
+  width: 70%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+
+  text-align: right;      /* כתיבה מימין */
+  direction: rtl;
+
+  transition: border .2s, box-shadow .2s;
+}
+
+/* placeholder במרכז */
+#login-form input::placeholder {
+  text-align: center;
+  direction: rtl;
+}
+
+
+#login-form input:focus {
+  outline: none;
+  border-color: #1f8199;
+  box-shadow: 0 0 0 2px rgba(31,129,153,.2);
+}
+
+/* כפתור התחברות */
+#login-form button {
+  border: solid 2px rgb(113, 113, 114);
+  color: rgb(0, 0, 0);
+  border-radius: 12px;
+  width: 25%;
+  background-color: white;
+  margin-bottom: 50px;
+  padding: 10px;
+}
+
+#login-form button:hover {
+  background: linear-gradient(135deg,#186677,#2f8fa4);
+}
+
+/* קישור הרשמה */
+#login-form .switch {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #1f8199;
+  cursor: pointer;
+  opacity: .85;
+}
+
+#login-form .switch:hover {
+  text-decoration: underline;
+}
+
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+<h1 id="title">התחברות</h1>
+<form id="login-form">
+
+<input type="email" id="login-email" placeholder="📧 אימייל" required>
+
+<input type="password" id="login-password" placeholder="🔐 סיסמה" required>
+<div id="error-box"></div>
+
+<button type="submit">התחבר</button>
+</form>
+
+<!-- GOOGLE -->
+<button id="google-login">
+<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+המשך עם Google
+</button>
+
+<div class="switch" onclick="showRegister()">
+נרשם חדש? לחץ כאן
+</div>
+
+<!-- REGISTER FORM -->
+<form id="register-form" style="display:none;">
+
+<input type="email" id="email" placeholder="📧 אימייל – זה יהיה שם המשתמש שלך" required>
+
+<div style="position:relative">
+<input type="password" id="password" placeholder="🔐 בחר סיסמה" required>
+<span onclick="togglePass('password')" style="position:absolute;left:10px;top:12px;cursor:pointer">👁</span>
+</div>
+
+<div style="position:relative">
+<input type="password" id="confirm-password" placeholder="🔐 אשר סיסמה" required>
+<span onclick="togglePass('confirm-password')" style="position:absolute;left:10px;top:12px;cursor:pointer">👁</span>
+</div>
+
+<button type="submit" class="register-btn">צור חשבון</button>
+
+<div class="back" onclick="backToLogin()">חזרה</div>
+
+</form>
+
+<div class="note">
+      ההתחברות מתבצעת בצורה מאובטחת דרך <br>Google  
+    </div>
+</div>
+
+    
+ 
+
+  
+  <script>
+  // 🔐 חיבור ל-Supabase (רק פעם אחת!)
+  const supabaseClient = supabase.createClient(
+    'https://obhhrcjvjoyurwfoukqr.supabase.co',
+    'sb_publishable_tSE7k5N9Qmfg2LeSyHTErg_FZgBoSrT'
+  );
+
+  // 🔑 התחברות עם Google
+  document.getElementById('google-login').onclick = async () => {
+    await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/index1.html'
+      }
+    });
+  };
+
+  // אם המשתמש כבר מחובר – מעבירים אותו
+  supabaseClient.auth.getSession().then(({ data }) => {
+  if (data.session) {
+  window.location.href = 'index1.html';
+}
+  });
+
+
+
+  // דוגמה לקריאה לפרופיל
+  async function getProfile() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) return null;
+
+    const userId = session.user.id;
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error) console.error(error);
+    return data;
+  }
+
+  getProfile().then(profile => {
+    if(profile){
+      console.log('פרטי המשתמש:', profile);
+    }
+  });
+
+
+function showError(msg){
+  const box = document.getElementById("error-box");
+  box.innerText = msg;
+  box.style.display = "block";
+}
+
+function clearError(){
+  document.getElementById("error-box").style.display="none";
+}
+
+// מעבר להרשמה
+function showRegister(){
+  clearError();
+  document.getElementById("login-form").style.display="none";
+  document.getElementById("google-login").style.display="none";
+  document.getElementById("register-form").style.display="block";
+  document.getElementById("title").innerText="הרשמה";
+}
+
+// חזרה להתחברות
+function backToLogin(){
+  location.reload();
+}
+
+// ============ LOGIN עם סיסמה ============
+
+document.getElementById("login-form").onsubmit = async (e)=>{
+  e.preventDefault();
+  clearError();
+
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if(error){
+    showError("אימייל או סיסמה שגויים");
+    return;
+  }
+
+  window.location.href = "index1.html";
+};
+
+
+// ============ REGISTER ============
+
+document.getElementById("register-form").onsubmit = async (e)=>{
+  e.preventDefault();
+  clearError();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const confirm = document.getElementById("confirm-password").value;
+
+  if(!email){
+    showError("נא להזין אימייל");
+    return;
+  }
+
+  if(password.length < 6){
+    showError("הסיסמה חייבת להכיל לפחות 6 תווים");
+    return;
+  }
+
+  if(password !== confirm){
+    showError("❌ הסיסמאות אינן תואמות");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: window.location.origin + "/index1.html"
+    }
+  });
+
+  if(error){
+
+    if(error.message.includes("already")){
+      showError("האימייל כבר רשום — נסה להתחבר");
+    }
+
+    else if(error.message.includes("Password")){
+      showError("הסיסמה חלשה מדי");
+    }
+
+    else{
+      showError("אירעה שגיאה, נסה שוב");
+      console.error(error);
+    }
+
+    return;
+  }
+
+  // הצלחה — מציגים הודעת אימות
+  document.querySelector(".card").innerHTML = `
+    <h2 style="color:#1f8199">📨 נשלח אימות למייל</h2>
+    <p style="margin-top:15px;font-size:15px;line-height:1.6">
+      שלחנו אליך מייל עם קישור אימות.<br>
+      לחץ עליו כדי להפעיל את החשבון.
+    </p>
+    <small style="opacity:.7">אפשר לסגור את החלון הזה.</small>
+  `;
+};
+
+function togglePass(id){
+  const el = document.getElementById(id);
+  el.type = el.type === "password" ? "text" : "password";
+}
+
+
+</script>
+
+
+</body>
+</html>

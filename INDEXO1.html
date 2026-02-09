@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>סיכום השתתפות</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #f4f7fa, #e1e8f0);
+      margin: 0;
+      padding: 20px;
+      color: #2c3e50;
+    }
+
+    .card {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1f8199;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    .row strong {
+      font-weight: bold;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 20px 0;
+    }
+
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      color: #b8860b;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      margin-top: 20px;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .note {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h1>סיכום השתתפות</h1>
+
+    <div class="row">
+      <span>מספר טבלאות</span>
+      <strong id="table-count">0</strong>
+    </div>
+
+    <div class="row">
+      <span>מחיר לטבלה</span>
+      <strong id="price-per-table">0 ₪</strong>
+    </div>
+
+    <hr>
+
+    <div class="row total">
+      <span>סה״כ לתשלום</span>
+      <span id="total-price">0 ₪</span>
+    </div>
+
+    <button id="pay-btn">
+      המשך לתשלום
+    </button>
+
+    <div class="note">
+      החיוב מתבצע בצורה מאובטחת.  
+      פרטי התשלום אינם נשמרים .
+    </div>
+  </div>
+
+  <script>
+    /*
+      בשלב הזה הנתונים מגיעים "כאילו" מהשרת.
+      בהמשך:
+      - Supabase Function תחזיר את האובייקט הזה
+      - והדף רק יציג
+    */
+
+    const participationSummary = {
+      tablesCount: 3,
+      pricePerTable: 6
+    };
+
+    const total = participationSummary.tablesCount * participationSummary.pricePerTable;
+
+    document.getElementById('table-count').textContent = participationSummary.tablesCount;
+    document.getElementById('price-per-table').textContent = participationSummary.pricePerTable + ' ₪';
+    document.getElementById('total-price').textContent = total + ' ₪';
+
+    document.getElementById('pay-btn').onclick = () => {
+      alert('כאן נשלח בקשה לשרת ליצירת תשלום');
+      // בהמשך:
+      // fetch('/create-payment')
+      // redirect לדף סליקה
+    };
+  </script>
+
+</body>
+</html>
